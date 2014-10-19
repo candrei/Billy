@@ -1,13 +1,100 @@
 var UI = require('ui');
 var ajax = require('ajax');
 
+var API_DB_URL = 'https://api.mongolab.com/api/1/databases/billy';
+var API_KEY = '9fwz927kh0cPoD_YqdzMLGxZe1TGmYG9';
+
 var billingCode, hours;
 
+// Splash screen
 var main = new UI.Card({
   title: 'Billy',
   subtitle: 'Easy, Accurate Billing',
   body: 'Press any button.'
 });
+
+// Retrieve avaialble accounts from MongoDB
+var accounts;
+ajax(
+  {
+    url: API_DB_URL + '/collections/projects?apiKey=' + API_KEY, 
+    method: 'get',
+    async: false
+  },
+  function(result) {
+    accounts = JSON.parse(result, function(prop, value) {
+      switch(prop) {
+        case "_id":
+          this.title = value;
+          return;
+        case "label":
+          this.subtitle = value;
+          return;
+        default:
+          return value;
+        }
+    });
+  },
+  function(error) {
+    console.log('ajax failure: ' + JSON.stringify(error));
+  }
+);
+console.log('items: ' + JSON.stringify(accounts));
+
+
+function saveTime(code, mins) {
+  
+  var timesheet = {'code' : code, 'mins': mins, 'day': '2014-10-19'};
+  
+  ajax(
+  {
+    url: API_DB_URL + '/collections/timesheet?apiKey=' + API_KEY,  
+    method: 'post',
+    data: timesheet,
+    type: 'json',
+    async: false
+  },
+  function(result) {
+    console.log('ajax success: ' + JSON.stringify(result));
+  },
+  function(error) {
+    console.log('ajax failure: ' + JSON.stringify(error));
+  }
+);
+}
+
+function daySummary(day) {
+   
+  var aggregateQuery = {'aggregate' : 'timesheet', 'pipeline': [{'$group' : {_id : '$code', total: {'$sum' : '$mins'}}}]};
+
+  var summary;
+  
+  ajax(
+  {
+    url: API_DB_URL + '/runCommand?apiKey=' + API_KEY,
+    method: 'post',
+    data: aggregateQuery,
+    type: 'json',
+    async: false
+  },
+  function(result) {
+    //result = JSON.parse(result);
+    
+    console.log('ajax success: ' + JSON.stringify(result));
+  },
+  function(error) {
+    console.log('ajax failure: ' + JSON.stringify(error));
+  }
+);
+  
+  return summary;
+}
+
+/*
+saveTime('M322-004', 60);
+*/
+daySummary('2014-10-19');
+
 
 var timer = 0;
 var timerInterval, minutes;
@@ -25,37 +112,6 @@ var start = function () {
     minutes = minuteVal < 10 ? "0" + minuteVal.toString() : minuteVal;
   }, 1000/60);
 };
-
-
-var API_URL = 'https://api.mongolab.com/api/1/databases/billy/collections/projects';
-var API_KEY = '9fwz927kh0cPoD_YqdzMLGxZe1TGmYG9';
-var accounts;
-ajax(
-  {
-    url: API_URL + '?apiKey=' + API_KEY, 
-    method: 'get',
-    async: false
-  },
-  function(result) {
-    accounts = JSON.parse(result, function(prop, value) {
-      switch(prop) {
-        case "_id":
-          this.title = value;
-          return;
-        case "label":
-          this.subtitle = value;
-          return;
-        default:
-          return value;
-        }
-    });
-    //console.log('ajax success: ' + JSON.stringify(result));
-  },
-  function(error) {
-    console.log('ajax failure: ' + JSON.stringify(error));
-  }
-);
-console.log('items: ' + JSON.stringify(accounts));
 
 
 var accountsMenu = new UI.Menu({
