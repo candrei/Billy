@@ -69,8 +69,6 @@ function daySummary(day) {
 
 	var summary;
 
-	var hourlyRate = 125;
-
 	ajax(
 		{
 			url: API_DB_URL + '/runCommand?apiKey=' + API_KEY,
@@ -80,14 +78,15 @@ function daySummary(day) {
 			async: false
 		},
 		function(result) {
-			var res = JSON.stringify(result.result)
+			var res = JSON.stringify(result.result);
+			var hourlyRate = 125;
 			summary = JSON.parse(res, function(prop, value) {
 				switch(prop) {
 					case "_id":
 						this.title = value;
 						return;
 					case "total":
-						this.dollarAmount = '$' + (value* hourlyRate / 60).toString();
+						this.dollarAmount = '$' + (value * hourlyRate / 60).toString();
 						return;
 					default:
 						return value;
