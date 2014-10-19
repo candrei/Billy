@@ -77,10 +77,19 @@ function daySummary(day) {
     type: 'json',
     async: false
   },
-  function(result) {
-    //result = JSON.parse(result);
+  function(result) {  
+    var res = JSON.stringify(result.result)
+    summary = JSON.parse(res, function(prop, value) {
+      switch(prop) {
+        case "_id":
+          this.name = value;
+          return;
+        default:
+          return value;
+        }
+    });
     
-    console.log('ajax success: ' + JSON.stringify(result));
+    console.log('ajax success: ' + JSON.stringify(summary));
   },
   function(error) {
     console.log('ajax failure: ' + JSON.stringify(error));
@@ -95,7 +104,6 @@ saveTime('M322-004', 60);
 */
 daySummary('2014-10-19');
 
-
 var timer = 0;
 var timerInterval, minutes;
 
@@ -105,14 +113,22 @@ var stop = function () {
 
 var start = function () {
   stop();
+  timer = 0;
   timerInterval = setInterval(function() {
-    timer += 1/60;
-    minuteVal = Math.floor(timer/60);
-    console.log(minuteVal);
-    minutes = minuteVal < 10 ? "0" + minuteVal.toString() : minuteVal;
-  }, 1000/60);
+    timer += 1;
+    //console.log(timer);
+  }, 1000);
 };
 
+var mainMenu = new UI.Menu({
+  sections: [{
+    items: [{
+      title: 'RECORD TIME'
+    }, {
+      title: 'INVOICES'
+    }]
+  }]
+});
 
 var accountsMenu = new UI.Menu({
   sections: [{
@@ -212,13 +228,28 @@ var recordingCard = new UI.Card();
 timeCaptureMenu.on('select', function(e) {
   switch (e.item.title) {
     case 'START TIMER':
-      start(timer);
+      start();
       recordingCard.title(billingCode);
       recordingCard.show();
       return;
     default:
       hoursMenu.show();
   }
+});
+
+mainMenu.on('select', function(e) {
+  switch (e.item.title) {
+    case 'RECORD TIME':
+      accountsMenu.show();
+      return;
+    case 'BILLING SUMMARY':
+      console.log('show summary');
+      return;
+  }
+});
+
+timeCard.on('click', function() {
+  accountsMenu.show();
 });
 
 var minutesToHours = function (minutes) {
@@ -229,16 +260,19 @@ var minutesToHours = function (minutes) {
 
 recordingCard.on('click', function(e) {
   stop();
-  console.log(minutes);
-  hours = minutesToHours(minutes);
-  timeCard.body(billingCode + ': +' + hours);
+  saveTime(billingCode, timer);
+  timeCard.body(billingCode + ': +' + timer + ' minutes');
   timeCard.show();
 });
 
+var hash = {
+  '8.00': 480
+}
+
 hoursMenu.on('select', function(e) {
   hours = e.item.title;
-  var timeCard = new UI.Card();
-  timeCard.body(billingCode + ': +' + hours);
+  saveTime(billingCode, hash[hours]);
+  timeCard.body(billingCode + ': +' + hash[hours] + ' minutes');
   timeCard.show();
 });
 
@@ -248,7 +282,7 @@ accountsMenu.on('select', function(e) {
 });
 
 main.on('click', function(e) {
-  accountsMenu.show();
+  mainMenu.show();
 });
 
 main.show();
