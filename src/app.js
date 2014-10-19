@@ -68,6 +68,8 @@ function daySummary(day) {
   var aggregateQuery = {'aggregate' : 'timesheet', 'pipeline': [{'$group' : {_id : '$code', total: {'$sum' : '$mins'}}}]};
 
   var summary;
+
+  var hourlyRate = 125;
   
   ajax(
   {
@@ -82,8 +84,11 @@ function daySummary(day) {
     summary = JSON.parse(res, function(prop, value) {
       switch(prop) {
         case "_id":
-          this.name = value;
+          this.title = value;
           return;
+		case "total":
+		  this.subtitle = '$' + Math.round((value/60) * hourlyRate);
+		  return;
         default:
           return value;
         }
@@ -98,11 +103,6 @@ function daySummary(day) {
   
   return summary;
 }
-
-/*
-saveTime('M322-004', 60);
-*/
-daySummary('2014-10-19');
 
 var timer = 0;
 var timerInterval, minutes;
@@ -146,13 +146,12 @@ var timeCaptureMenu = new UI.Menu({
   }]
 });
 
-
 var getDefaultHours = function () {
-	var obj = {title: '8.00'};
-	var options = [obj];
-	for (var i = 0; i < 8; i++) {
-		obj.title = (parseInt(obj.title) -0.25).toString();
-		options.push(obj);
+	var i = 8.00;
+	var options = [];
+	while (i) {
+		options.push({title: i.toString()});
+		i - 0.25;
 	}
 	return options;
 }
@@ -164,6 +163,13 @@ var hoursMenu = new UI.Menu({
     items: defaultHours
   }]
 });
+
+var invoicesMenu = new UI.Menu({
+	sections: [{
+		items: daySummary('2014-10-19')
+	}]
+});
+
 
 var invoicesCard = new UI.Card();
   invoicesCard.title('Invoices');
@@ -194,12 +200,14 @@ mainMenu.on('select', function(e) {
       accountsMenu.show();
       return;
     case 'INVOICES':
+		/*
       var summary = daySummary('2014-10-19'), entry, body = "";
       for( var i=0; i <summary.length; i++) {
         entry = summary[i];
-        body += entry.name + ':\n' + entry.total + '\n\n';
+        body += entry.title + ':\n' + entry.total + '\n\n';
       }
-      invoicesCard.body(body);
+	*/
+      //invoicesMenu.body(body);
       invoicesCard.show();
       return;
   }
