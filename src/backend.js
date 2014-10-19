@@ -9,10 +9,9 @@ function getProjects() {
       url: url
       method: 'GET',
       type: 'json',
-      data: {apiKey: apiKey},
-      async: false
+      data: {apiKey: apiKey}
     },
-    function(result){ console.log('ajax success: ' + result); },
-    function(error){ console.log('ajax failure: ' + error); }
+    function(e){ console.log('ajax success: ' + e); },
+    function(e){ console.log('ajax failure: ' + e); }
   );
 }

@@ -1,9 +1,3 @@
-/**
- * Welcome to Pebble.js!
- *
- * This is where you write your app.
- */
-
 var UI = require('ui');
 //var Vector2 = require('vector2');
 
@@ -74,18 +68,15 @@ var hoursMenu = new UI.Menu({
 });
 
 hoursMenu.on('select', function(e) {
-  hours = e.item.title
-  console.log('hours:' + hours);
+  hours = e.item.title;
   var card = new UI.Card();
   card.title(billingCode + ': +' + hours);
-//  card.subtitle('Is a Window');
-  card.body('Timesheet updated successfully');
+  card.body('Updating Timesheet...');
   card.show();
 });
 
 accountsMenu.on('select', function(e) {
-  billingCode = e.item.title
-  console.log('Account Code:' + billingCode);
+  billingCode = e.item.title;
   hoursMenu.show();
 });
 
@@ -95,27 +86,3 @@ main.on('click', function(e) {
 });
 
 main.show();
-
-
-
-/*main.on('click', 'select', function(e) {
-  var wind = new UI.Window();
-  var textfield = new UI.Text({
-    position: new Vector2(0, 50),
-    size: new Vector2(144, 30),
-    font: 'gothic-36-bold',
-    text: 'Timesheet Updated!',
-    textAlign: 'center'
-  });
-  wind.add(textfield);
-  wind.show();
-});
-
-main.on('click', 'down', function(e) {
-  var card = new UI.Card();
-  card.title('A Card');
-  card.subtitle('Is a Window');
-  card.body('The simplest window type in Pebble.js.');
-  card.show();
-});
-*/
