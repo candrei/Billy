@@ -217,6 +217,9 @@ var hoursMenu = new UI.Menu({
   }]
 });
 
+var invoicesCard = new UI.Card();
+  invoicesCard.title('Invoices');
+
 var timeCard = new UI.Card();
   timeCard.title('Timeheet');
   timeCard.subtitle('UPDATED!');
@@ -242,8 +245,14 @@ mainMenu.on('select', function(e) {
     case 'RECORD TIME':
       accountsMenu.show();
       return;
-    case 'BILLING SUMMARY':
-      console.log('show summary');
+    case 'INVOICES':
+      var summary = daySummary('2014-10-19'), entry, body = "";
+      for( var i=0; i <summary.length; i++) {
+        entry = summary[i];
+        body += entry.name + ':\n' + entry.total + '\n\n';
+      }
+      invoicesCard.body(body);
+      invoicesCard.show();
       return;
   }
 });
@@ -251,6 +260,7 @@ mainMenu.on('select', function(e) {
 timeCard.on('click', function() {
   accountsMenu.show();
 });
+
 
 var minutesToHours = function (minutes) {
   if (minutes < 15) { return '0.25'; }
