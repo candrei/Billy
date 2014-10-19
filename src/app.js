@@ -1,5 +1,7 @@
 var UI = require('ui');
+var ajax = require('ajax');
 //var Vector2 = require('vector2');
+
 
 var billingCode, hours;
 
@@ -9,21 +11,41 @@ var main = new UI.Card({
   body: 'Press any button.'
 });
 
+
+var API_URL = 'https://api.mongolab.com/api/1/databases/billy/collections/projects';
+var API_KEY = '9fwz927kh0cPoD_YqdzMLGxZe1TGmYG9';
+var accounts;
+ajax(
+  {
+    url: API_URL + '?apiKey=' + API_KEY, 
+    method: 'get',
+    async: false
+  },
+  function(result) {
+    accounts = JSON.parse(result, function(prop, value) {
+      switch(prop) {
+        case "_id":
+          this.title = value;
+          return;
+        case "label":
+          this.subtitle = value;
+          return;
+        default:
+          return value;
+        }
+    });
+    //console.log('ajax success: ' + JSON.stringify(result));
+  },
+  function(error) {
+    console.log('ajax failure: ' + JSON.stringify(error));
+  }
+);
+console.log('items: ' + JSON.stringify(accounts));
+
+
 var accountsMenu = new UI.Menu({
   sections: [{
-    items: [{
-      title: 'C201-004',
-      subtitle: 'AirForce Dashboard'
-    }, {
-      title: 'A345-004',
-      subtitle: 'Veteran Affairs Proj'
-    }, {
-      title: 'N565-004',
-      subtitle: 'Navy Recruitment'
-    }, {
-      title: 'M322-004',
-      subtitle: 'Marines Game'
-    }]
+    items: accounts
   }]
 });
 
