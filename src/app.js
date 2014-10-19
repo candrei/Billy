@@ -252,7 +252,7 @@ mainMenu.on('select', function(e) {
       for( var i=0; i <summary.length; i++) {
         entry = summary[i];
         ammount = Math.round(entry.total*hourlyRate*100/60) / 100;
-        body += entry.name + ':   $' +  ammount.toString()+ '\n                 ' + entry.total + ' min\n\n';
+        body += entry.name + ':\n                    $' +  ammount.toString()+ '\n                    ' + entry.total + ' min\n\n';
       }
       invoicesCard.body(body);
       invoicesCard.show();
@@ -320,12 +320,16 @@ hoursMenu.on('select', function(e) {
   timeCard.show();
 });
 
+timeCard.on('click', function () {
+	mainMenu.show();
+});
+
 accountsMenu.on('select', function(e) {
   billingCode = e.item.title;
   timeCaptureMenu.show();
 });
 
-main.on('click', function(e) {
+main.on('click', function() {
   mainMenu.show();
 });
 
