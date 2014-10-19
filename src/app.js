@@ -5,44 +5,106 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
+//var Vector2 = require('vector2');
+
+var billingCode, hours;
 
 var main = new UI.Card({
-  title: 'Pebble.js',
-  icon: 'images/menu_icon.png',
-  subtitle: 'Hello World1!',
+  title: 'Billy',
+  subtitle: 'Easy, Accurate Billing',
   body: 'Press any button.'
+});
+
+var accountsMenu = new UI.Menu({
+  sections: [{
+    items: [{
+      title: 'C201-004',
+      subtitle: 'AirForce Dashboard'
+    }, {
+      title: 'A345-004',
+      subtitle: 'Veteran Affairs Proj'
+    }, {
+      title: 'N565-004',
+      subtitle: 'Navy Recruitment'
+    }, {
+      title: 'M322-004',
+      subtitle: 'Marines Game'
+    }]
+  }]
+});
+
+var hoursMenu = new UI.Menu({
+  sections: [{
+    items: [{
+      title: '8.00'
+    }, {
+      title: '7.75'
+    }, {
+      title: '7.50'
+    }, {
+      title: '7.25'
+    }, {
+      title: '7.00'
+    }, {
+      title: '6.75'
+    }, {
+      title: '6.50'
+    }, {
+      title: '6.25'
+    }, {
+      title: '6.00'
+    }, {
+      title: '5.75'
+    }, {
+      title: '5.50'
+    }, {
+      title: '5.25'
+    }, {
+      title: '5.00'
+    }, {
+      title: '4.75'
+    }, {
+      title: '4.50'
+    }, {
+      title: '4.25'
+    }, {
+      title: '4.00'
+    }]
+  }]
+});
+
+hoursMenu.on('select', function(e) {
+  hours = e.item.title
+  console.log('hours:' + hours);
+  var card = new UI.Card();
+  card.title(billingCode + ': +' + hours);
+//  card.subtitle('Is a Window');
+  card.body('Timesheet updated successfully');
+  card.show();
+});
+
+accountsMenu.on('select', function(e) {
+  billingCode = e.item.title
+  console.log('Account Code:' + billingCode);
+  hoursMenu.show();
+});
+
+main.on('click', function(e) {
+  //sections should be dynamic
+  accountsMenu.show();
 });
 
 main.show();
 
-main.on('click', 'up', function(e) {
-  var menu = new UI.Menu({
-    sections: [{
-      items: [{
-        title: 'Pebble.js',
-        icon: 'images/menu_icon.png',
-        subtitle: 'Can do Menus'
-      }, {
-        title: 'Second Item',
-        subtitle: 'Subtitle Text'
-      }]
-    }]
-  });
-  menu.on('select', function(e) {
-    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-    console.log('The item is titled "' + e.item.title + '"');
-  });
-  menu.show();
-});
 
-main.on('click', 'select', function(e) {
+
+/*main.on('click', 'select', function(e) {
   var wind = new UI.Window();
   var textfield = new UI.Text({
     position: new Vector2(0, 50),
     size: new Vector2(144, 30),
-    font: 'gothic-24-bold',
-    text: 'Text Anywhere!',
+    font: 'gothic-36-bold',
+    text: 'Timesheet Updated!',
     textAlign: 'center'
   });
   wind.add(textfield);
@@ -56,3 +118,4 @@ main.on('click', 'down', function(e) {
   card.body('The simplest window type in Pebble.js.');
   card.show();
 });
+*/
