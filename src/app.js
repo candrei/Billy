@@ -147,73 +147,21 @@ var timeCaptureMenu = new UI.Menu({
 });
 
 
+var getDefaultHours = function () {
+	var obj = {title: '8.00'};
+	var options = [obj];
+	for (var i = 0; i < 8; i++) {
+		obj.title = (parseInt(obj.title) -0.25).toString();
+		options.push(obj);
+	}
+	return options;
+}
+
+var defaultHours = getDefaultHours();
+
 var hoursMenu = new UI.Menu({
   sections: [{
-    items: [{
-      title: '8.00'
-    }, {
-      title: '7.75'
-    }, {
-      title: '7.50'
-    }, {
-      title: '7.25'
-    }, {
-      title: '7.00'
-    }, {
-      title: '6.75'
-    }, {
-      title: '6.50'
-    }, {
-      title: '6.25'
-    }, {
-      title: '6.00'
-    }, {
-      title: '5.75'
-    }, {
-      title: '5.50'
-    }, {
-      title: '5.25'
-    }, {
-      title: '5.00'
-    }, {
-      title: '4.75'
-    }, {
-      title: '4.50'
-    }, {
-      title: '4.25'
-    }, {
-      title: '4.00'
-    }, {
-      title: '3.75'
-    }, {
-      title: '3.50'
-    }, {
-      title: '3.25'
-    }, {
-      title: '3.00'
-    }, {
-      title: '2.75'
-    }, {
-      title: '2.50'
-    }, {
-      title: '2.25'
-    }, {
-      title: '2.00'
-    }, {
-      title: '1.75'
-    }, {
-      title: '1.50'
-    }, {
-      title: '1.25'
-    }, {
-      title: '1.00'
-    }, {
-      title: '0.75'
-    }, {
-      title: '0.50'
-    }, {
-      title: '0.25'
-    }]
+    items: defaultHours
   }]
 });
 
@@ -276,8 +224,39 @@ recordingCard.on('click', function(e) {
 });
 
 var hash = {
-  '8.00': 480
-}
+	'8.00': 480,
+	'7.75': 465,
+	'7.50': 450,
+	'7.25': 435,
+	'7.00': 420,
+	'6.75': 405,
+	'6.50': 390,
+	'6.25': 375,
+	'6.00': 360,
+	'5.75': 345,
+	'5.50': 330,
+	'5.25': 315,
+	'5.00': 300,
+	'4.75': 285,
+	'4.50': 270,
+	'4.25': 255,
+	'4.00': 240,
+	'3.75': 225,
+	'3.50': 210,
+	'3.25': 195,
+	'3.00': 180,
+	'2.75': 165,
+	'2.50': 150,
+	'2.25': 135,
+	'2.00': 120,
+	'1.75': 105,
+	'1.50': 90,
+	'1.25': 75,
+	'1.00': 60,
+	'0.75': 45,
+	'0.50': 30,
+	'0.25': 15
+};
 
 hoursMenu.on('select', function(e) {
   hours = e.item.title;
